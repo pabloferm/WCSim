@@ -1,0 +1,50 @@
+
+#/run/verbose                           0
+#/tracking/verbose                      0
+#/hits/verbose                          0
+
+#/control/verbose 0
+#/control/saveHistory
+#/run/verbose 0
+#/process/verbose 0
+#/tracking/verbose 1
+#/event/verbose 1
+/random/setSeeds                       3 0
+
+/WCSim/WCgeom                          nuPRISMShort_mPMT
+/WCSim/Construct
+
+/WCSim/PMTQEMethod                     Stacking_And_SensitiveDetector
+/WCSim/PMTCollEff                      on
+/WCSim/SavePi0                         false
+
+/DAQ/Digitizer                         SKI
+/DAQ/Trigger                           NDigits
+/control/execute                       macros/daq.mac
+
+/DarkRate/SetDarkRate                  0.0 kHz
+/mygen/generator                        gps
+/gps/particle                          e-
+/gps/ene/type                          Lin               
+/gps/ene/gradient                       0
+/gps/ene/intercept                     1
+/gps/energy                            500 MeV
+
+/gps/ang/type                          iso           
+
+/gps/pos/type                          Volume 
+/gps/pos/shape                         Cylinder             
+/gps/pos/centre                        0 0 0 m
+/gps/pos/halfz                          2 m
+/gps/pos/rot1                          1 0 0
+/gps/pos/rot2                          0 0 1
+/gps/pos/radius                        3 m
+/gps/verbose                            2
+/Tracking/fractionOpticalPhotonsToDraw 0.0
+
+/WCSimIO/RootFile                      10_solidworks.root
+#/WCSimIO/SaveRooTracker                0
+
+
+/run/beamOn                            10
+#/control/execute macros/visOGLQT.mac

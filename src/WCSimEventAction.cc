@@ -61,7 +61,7 @@
 
 WCSimEventAction::WCSimEventAction(WCSimRunAction* myRun, 
 				   WCSimDetectorConstruction* myDetector, 
-				   WCSimPrimaryGeneratorAction* myGenerator)
+				   WCSimPrimaryGeneratorAction* myGenerator) //me:constructor
   :runAction(myRun), generatorAction(myGenerator), 
    detectorConstructor(myDetector),
    ConstructedDAQClasses(false),
@@ -102,6 +102,7 @@ void WCSimEventAction::CreateDAQInstances()
   if(DigitizerChoice == "SKI") {
     WCSimWCDigitizerSKI* WCDM = new WCSimWCDigitizerSKI("WCReadoutDigits", detectorConstructor, DAQMessenger);
     DMman->AddNewModule(WCDM);
+std::cout << "SKIasadigitizer" << std::endl;
   }
   else {
     G4cerr << "Unknown DigitizerChoice " << DigitizerChoice << G4endl;
@@ -112,6 +113,7 @@ void WCSimEventAction::CreateDAQInstances()
   if(TriggerChoice == "NDigits") {
     WCSimWCTriggerNDigits* WCTM = new WCSimWCTriggerNDigits("WCReadout", detectorConstructor, DAQMessenger);
     DMman->AddNewModule(WCTM);
+std::cout << "triggermodultriggermodule" << std::endl;
   }
   else if(TriggerChoice == "NDigits2") {
     WCSimWCTriggerNDigits2* WCTM = new WCSimWCTriggerNDigits2("WCReadout", detectorConstructor, DAQMessenger);
@@ -247,6 +249,7 @@ void WCSimEventAction::EndOfEventAction(const G4Event* evt)
 	(*WCHC)[hitIndex]->AddParentID(0); // Make parent a geantino (whatever that is)
 	(*WCHC)[hitIndex]->AddPhotonStartPos(pos);
 	(*WCHC)[hitIndex]->AddPhotonEndPos(pos);
+      	(*WCHC)[hitIndex]->AddPhotonDir(pos);
 	(*WCHC)[hitIndex]->AddPhotonStartTime(time);
       }
     }
@@ -476,6 +479,7 @@ void WCSimEventAction::EndOfEventAction(const G4Event* evt)
 		   trajectoryContainer,
 		   WCDC_hits,
 		   WCDC);
+std::cout << "you are here" << std::endl;
    }
   
   
@@ -499,7 +503,8 @@ void WCSimEventAction::EndOfEventAction(const G4Event* evt)
     generatorAction->SaveOptionsToOutput(wcsimopt);
     
     SavedOptions = true;
-  }
+std::cout << "notsaved" << std::endl; 
+ }
 }
 
 G4int WCSimEventAction::WCSimEventFindStartingVolume(G4ThreeVector vtx)
@@ -881,24 +886,32 @@ std::cout <<"before raw hits "<< std::endl;
     wcsimrootevent->SetNumTubesHit(WCDC_hits->entries());
     std::vector<float> truetime, smeartime;
     std::vector<int>   primaryParentID;
+     std::vector<int>   refTrackID;
     std::vector<float> photonStartTime;
     std::vector<TVector3> photonStartPos;
+    std::vector<TVector3> photonDir; 
     std::vector<TVector3> photonEndPos;
     std::vector<int>   reflectorID;
     std::vector<TVector3> reflectorPos;
     
     double hit_time_smear, hit_time_true;
-    int hit_parentid;
+    int hit_parentid;int hit_reftrackid;
     float hit_photon_starttime;
     TVector3 hit_photon_startpos;
+     TVector3 hit_photon_dir;
     TVector3 hit_photon_endpos;
+    int hit_trackid ;
     //loop over the DigitsCollection
     for(int idigi = 0; idigi < WCDC_hits->entries(); idigi++) {
       int digi_tubeid = (*WCDC_hits)[idigi]->GetTubeID();
-	int digi_iHR = (*WCDC_hits)[idigi]->GetIsHitReflector();
+      int digi_iHR = (*WCDC_hits)[idigi]->GetIsHitReflector();
+     
+      
       WCSimPmtInfo *pmt = ((WCSimPmtInfo*)fpmts->at(digi_tubeid -1));
-std::cout << "TotalPe" << (*WCDC_hits)[idigi]->GetTotalPe() << std::endl;
+      //std::cout << "TotalPe" << (*WCDC_hits)[idigi]->GetTotalPe() << std::endl;
       for(G4int id = 0; id < (*WCDC_hits)[idigi]->GetTotalPe(); id++){
+        hit_trackid = (*WCDC_hits)[idigi]->GetTrackID();
+	//std::cout<<"trackid =  "<<hit_trackid<<std::endl;
 	hit_time_true  = (*WCDC_hits)[idigi]->GetPreSmearTime(id);
 	hit_parentid = (*WCDC_hits)[idigi]->GetParentID(id);
 	hit_photon_starttime = (*WCDC_hits)[idigi]->GetPhotonStartTime(id);
@@ -910,16 +923,22 @@ std::cout << "TotalPe" << (*WCDC_hits)[idigi]->GetTotalPe() << std::endl;
 	        (*WCDC_hits)[idigi]->GetPhotonEndPos(id)[0],
 	        (*WCDC_hits)[idigi]->GetPhotonEndPos(id)[1],
 	        (*WCDC_hits)[idigi]->GetPhotonEndPos(id)[2]);
+	hit_photon_dir = TVector3(
+	        (*WCDC_hits)[idigi]->GetPhotonDir(id)[0], 
+	        (*WCDC_hits)[idigi]->GetPhotonDir(id)[1], 
+	        (*WCDC_hits)[idigi]->GetPhotonDir(id)[2]);
+	//	std::cout<<" "<< (*WCDC_hits)[idigi]->GetPhotonDir(id)[0]<<std::endl;
 	truetime.push_back(hit_time_true);
 	primaryParentID.push_back(hit_parentid);
 	photonStartTime.push_back(hit_photon_starttime);
 	photonStartPos.push_back(hit_photon_startpos);
 	photonEndPos.push_back(hit_photon_endpos);
+       	photonDir.push_back(hit_photon_dir);
 #ifdef _SAVE_RAW_HITS_VERBOSE
 	hit_time_smear = (*WCDC_hits)[idigi]->GetTime(id);
 	smeartime.push_back(hit_time_smear);
 #endif
-      }//id
+      //id
 #ifdef _SAVE_RAW_HITS_VERBOSE
       if(digi_tubeid < NPMTS_VERBOSE) {
 	G4cout << "Adding " << truetime.size()
@@ -933,20 +952,25 @@ std::cout << "TotalPe" << (*WCDC_hits)[idigi]->GetTotalPe() << std::endl;
 	G4cout << G4endl;
       }
 #endif
-std::cout <<"till here" <<std::endl;
+      //std::cout <<"till here" <<std::endl;
     int hit_reflectorid;
     TVector3 hit_photon_reflectorpos;
       for(G4int d = 0; d < (*WCDC_hits)[idigi]->GetNReflectorHit(); d++){
 	hit_reflectorid = (*WCDC_hits)[idigi]->GetReflectorID(d);
+	hit_reftrackid = (*WCDC_hits)[idigi]->GetRefTrackID(d);
+	//std::cout<<"relectortrack =  "<<hit_reftrackid<<std::endl; 
 	reflectorID.push_back(hit_reflectorid);
+	refTrackID.push_back(hit_reftrackid);
 	hit_photon_reflectorpos = TVector3(
 	        (*WCDC_hits)[idigi]->GetReflectorPos(d)[0],
 	        (*WCDC_hits)[idigi]->GetReflectorPos(d)[1],
 	        (*WCDC_hits)[idigi]->GetReflectorPos(d)[2]);
 	reflectorPos.push_back(hit_photon_reflectorpos);
 	}
+      }
       wcsimrootevent->AddCherenkovHit(digi_tubeid,
-					digi_iHR,
+				      digi_iHR,
+				      hit_trackid ,
 				      pmt->Get_mPMTid(),
 				      pmt->Get_mPMT_pmtid(),
 				      truetime,
@@ -954,16 +978,20 @@ std::cout <<"till here" <<std::endl;
 				      photonStartTime,
 				      photonStartPos,
 				      photonEndPos,
-					reflectorID,
-					reflectorPos      
-							);
+				      photonDir,
+				      refTrackID,
+				      reflectorID,
+				      reflectorPos      
+				      );
 	smeartime.clear();
       truetime.clear();
       primaryParentID.clear();
-      //reflectorID.clear();
+      refTrackID.clear();
+      reflectorID.clear();
       photonStartTime.clear();
       photonStartPos.clear();
       photonEndPos.clear();
+       photonDir.clear();
       reflectorPos.clear();
 
     }//idigi
@@ -1223,6 +1251,8 @@ void WCSimEventAction::FillFlatTree(G4int event_id,
       for(G4int id = 0; id < (*WCDC_hits)[idigi]->GetTotalPe(); id++){
 	float digi_time = (*WCDC_hits)[idigi]->GetTime(id);
 	int hit_parentid = (*WCDC_hits)[idigi]->GetParentID(id);
+	int hit_trackid = (*WCDC_hits)[idigi]->GetTrackID();
+	//	std::cout<<" "<<hit_trackid<<std::endl;
 #ifdef _SAVE_RAW_HITS_VERBOSE
 	G4cout << "Hit " << id << " with time " << digi_time << " and parentID " << hit_parentid << G4endl;
 #endif
