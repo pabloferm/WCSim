@@ -120,13 +120,9 @@ WCSimDetectorConstruction::WCSimDetectorConstruction(G4int DetConfig,WCSimTuning
 
   messenger = new WCSimDetectorMessenger(this);
 
+
   // Get WCSIMDIR
-  const char *wcsimdirenv = std::getenv("WCSIMDIR");
-  if (!(wcsimdirenv && wcsimdirenv[0])) { // make sure it's non-empty
-    wcsimdirenv = "."; // the "default" value
-    G4cout << "Note: WCSIMDIR not set, assuming: " << wcsimdirenv << G4endl;
-  }
-  wcsimdir_path = wcsimdirenv;
+  wcsimdir_path = std::getenv("WCSIMDIR");
 }
 
 #include "G4GeometryManager.hh"
