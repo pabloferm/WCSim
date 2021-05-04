@@ -103,7 +103,7 @@ void sample_readfile(char *filename=NULL, bool verbose=false)
   // and always exists.
   WCSimRootTrigger* wcsimrootevent;
 
-  TH1F *h1 = new TH1F("PMT Hits", "PMT Hits", 100, 0, 100);
+  TH1F *h1 = new TH1F("PMT Hits", "PMT Hits", 8000, 0, 8000);
   TH1F *hvtx0 = new TH1F("Event VTX0", "Event VTX0", 200, -1500, 1500);
   TH1F *hvtx1 = new TH1F("Event VTX1", "Event VTX1", 200, -1500, 1500);
   TH1F *hvtx2 = new TH1F("Event VTX2", "Event VTX2", 200, -1500, 1500);
@@ -185,8 +185,7 @@ void sample_readfile(char *filename=NULL, bool verbose=false)
     int ncherenkovhits     = wcsimrootevent->GetNcherenkovhits();
     int ncherenkovdigihits = wcsimrootevent->GetNcherenkovdigihits(); 
     
-    //h1->Fill(ncherenkovdigihits);
-    h1->Fill(ncherenkovhits);
+    h1->Fill(ncherenkovdigihits);
     if(verbose){
       printf("node id: %i\n", ev);
       printf("Ncherenkovhits %d\n",     ncherenkovhits);
