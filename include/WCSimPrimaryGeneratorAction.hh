@@ -15,7 +15,6 @@
 #include "TTree.h"
 #include "TNRooTrackerVtx.hh"
 #include "TClonesArray.h"
-#include "TRandom3.h"
 
 class WCSimDetectorConstruction;
 class G4ParticleGun;
@@ -97,7 +96,6 @@ class WCSimPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         G4double niball_X;
         G4double niball_Y;
         G4double niball_Z;
-        TRandom3 * randGen;
 
         // These go with jhfNtuple
         //G4int mode;
