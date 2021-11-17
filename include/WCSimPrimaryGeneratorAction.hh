@@ -11,6 +11,8 @@
 
 #include "WCSimRootOptions.hh"
 #include "WCSimGenerator_NiBall.hh"
+#include "WCSimGenerator_Radioactivity.hh"
+
 #include "TFile.h"
 #include "TTree.h"
 #include "TNRooTrackerVtx.hh"
@@ -24,6 +26,7 @@ class WCSimPrimaryGeneratorMessenger;
 
 class WCSimPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
+
     public:
         WCSimPrimaryGeneratorAction(WCSimDetectorConstruction*);
         ~WCSimPrimaryGeneratorAction();
@@ -43,8 +46,8 @@ class WCSimPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 
         // These go with jhfNtuple
         G4int GetVecRecNumber(){return vecRecNumber;}
-        //G4int GetMode() {return mode;};
-        InteractionType_t GetMode() {return mode;};
+        G4int GetMode() {return mode;};
+        //InteractionType_t GetMode() {return mode;};
         G4int GetVtxVol() {return vtxvol;};
         G4ThreeVector GetVtx() {return vtx;}
         G4int GetNpar() {return npar;};
@@ -81,9 +84,21 @@ class WCSimPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         G4bool   useGunEvt;
         G4bool   useLaserEvt;  //T. Akiri: Laser flag
         G4bool   useGPSEvt;
+        G4bool   useRadonEvt; // G. Pronost: Radon flag
+        G4bool   useInjectorEvt; // K.M.Tsui: injector flag
+        
         std::fstream inputFile;
         G4String vectorFileName;
         G4bool   GenerateVertexInRock;
+        
+        // Variables for Radioactive and Radon generators
+        G4double radioactive_time_window;
+
+        // For Rn event
+        WCSimGenerator_Radioactivity* myRn222Generator;
+        G4int fRnScenario;
+        G4int fRnSymmetry;
+        
         G4bool   usePoissonPMT;
 	G4bool   useNiBallEvt; // Pablo: Ni ball calibration
         G4double poissonPMTMean;
@@ -91,7 +106,7 @@ class WCSimPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         // Variables for Ni ball
         WCSimGenerator_NiBall* myNiBallGenerator;
         double fNiBallPosition[3];
-	std::string fNiBallSpectrum;
+	      std::string fNiBallSpectrum;
         double fNiGammaDirection[3];
         double rn[4];
         G4double niball_X;
@@ -99,9 +114,17 @@ class WCSimPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         G4double niball_Z;
         G4String niball_spectrum;
 
+        // For injector events
+        G4int nPhotons;
+        G4int injectorOnIdx;
+        G4double twindow;
+        G4double openangle;
+        G4double wavelength;
+
+
         // These go with jhfNtuple
-        //G4int mode;
-        InteractionType_t mode;
+        G4int mode;
+        //InteractionType_t mode;
         G4int vtxvol;
         G4ThreeVector vtx;
         G4int npar;
@@ -128,9 +151,9 @@ class WCSimPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         TTree* fRooTrackerTree;
         TTree* fSettingsTree;
         NRooTrackerVtx* fTmpRootrackerVtx;
-        float fNuPrismRadius;
-        float fNuBeamAng;
-        float fNuPlanePos[3];
+        double fNuPrismRadius;
+        double fNuBeamAng;
+        double fNuPlanePos[3];
 
     public:
 
@@ -152,6 +175,15 @@ class WCSimPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         inline void SetGPSEvtGenerator(G4bool choice) { useGPSEvt = choice; }
         inline G4bool IsUsingGPSEvtGenerator()  { return useGPSEvt; }
 
+        // K.M.Tsui: addition of injector events
+        inline void SetInjectorEvtGenerator(G4bool choice) { useInjectorEvt = choice; }
+        inline G4bool IsUsingInjectorEvtGenerator()  { return useInjectorEvt; }
+        inline void SetInjectorBeamPhotons(G4int np) { nPhotons = np;}
+        inline void SetInjectorOnIdx(G4int idx) { injectorOnIdx = idx;}
+        inline void SetInjectorTimeWindow(G4double tw) { twindow = tw;}
+        inline void SetInjectorOpeningAngle(G4double angle) { openangle = angle;}
+        inline void SetInjectorWavelength(G4double wl) { wavelength = wl;}
+
         inline void OpenVectorFile(G4String fileName) 
         {
             if ( inputFile.is_open() ) 
@@ -167,6 +199,18 @@ class WCSimPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         }
         inline G4bool IsGeneratingVertexInRock() { return GenerateVertexInRock; }
         inline void SetGenerateVertexInRock(G4bool choice) { GenerateVertexInRock = choice; }
+        
+        inline void SetRadioactiveTimeWindow(G4double choice) { radioactive_time_window = choice; }
+        inline G4double GetRadioactiveTimeWindow()  		{ return radioactive_time_window; }
+
+        inline void SetRadonEvtGenerator(G4bool choice) 	{ useRadonEvt = choice; }
+        inline G4bool IsUsingRadonEvtGenerator()  		{ return useRadonEvt; }
+  
+        inline void SetRadonScenario(G4int choice) 		{ fRnScenario = choice; }
+        inline G4int GetRadonScenario() 			{ return fRnScenario; }
+  
+        inline void SetRadonSymmetry(G4int choice) 		{ fRnSymmetry = choice; }
+        inline G4int GetRadonSymmetry() 			{ return fRnSymmetry; }
 
         inline void SetNiBallX(G4double choice) { niball_X = choice; }
         inline G4double GetNiBallX()            { return niball_X; }
