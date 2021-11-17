@@ -50,7 +50,7 @@ void sample_readfile(char *filename=NULL, bool verbose=false)
   TFile *file;
   // Open the file
   if (filename==NULL){
-    file = new TFile("../wcsim_output.root","read");
+    file = new TFile("../wcsim.root","read");
   }else{
     file = new TFile(filename,"read");
   }
@@ -103,8 +103,7 @@ void sample_readfile(char *filename=NULL, bool verbose=false)
   // and always exists.
   WCSimRootTrigger* wcsimrootevent;
 
-  //TH1F *h1 = new TH1F("PMT Hits", "PMT Hits", 8000, 0, 8000);
-  TH1F *h1 = new TH1F("PMT Hits", "PMT Hits", 200, 0, 200);
+  TH1F *h1 = new TH1F("PMT Hits", "PMT Hits", 8000, 0, 8000);
   TH1F *hvtx0 = new TH1F("Event VTX0", "Event VTX0", 200, -1500, 1500);
   TH1F *hvtx1 = new TH1F("Event VTX1", "Event VTX1", 200, -1500, 1500);
   TH1F *hvtx2 = new TH1F("Event VTX2", "Event VTX2", 200, -1500, 1500);
