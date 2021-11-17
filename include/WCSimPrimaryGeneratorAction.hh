@@ -91,11 +91,13 @@ class WCSimPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         // Variables for Ni ball
         WCSimGenerator_NiBall* myNiBallGenerator;
         double fNiBallPosition[3];
+	std::string fNiBallSpectrum;
         double fNiGammaDirection[3];
         double rn[4];
         G4double niball_X;
         G4double niball_Y;
         G4double niball_Z;
+        G4String niball_spectrum;
 
         // These go with jhfNtuple
         //G4int mode;
@@ -172,6 +174,8 @@ class WCSimPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         inline G4double GetNiBallY()            { return niball_Y; }
         inline void SetNiBallZ(G4double choice) { niball_Z = choice; }
         inline G4double GetNiBallZ()            { return niball_Z; }
+        inline void SetNiBallSpectrum(G4String choice) { niball_spectrum = choice; }
+        inline G4String GetNiBallSpectrum()            { return niball_spectrum; }
 
         inline void SetPoissonPMT(G4bool choice) { usePoissonPMT = choice; }
         inline G4bool IsUsingPoissonPMT(){ return usePoissonPMT; }

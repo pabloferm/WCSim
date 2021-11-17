@@ -35,6 +35,7 @@ class WCSimPrimaryGeneratorMessenger: public G4UImessenger
   G4UIcmdWithADouble* niball_x_Cmd;
   G4UIcmdWithADouble* niball_y_Cmd;
   G4UIcmdWithADouble* niball_z_Cmd;
+  G4UIcmdWithAString* niball_spectrumCmd;
 
 };
 

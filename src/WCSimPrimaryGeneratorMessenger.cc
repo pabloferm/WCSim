@@ -51,6 +51,11 @@ WCSimPrimaryGeneratorMessenger::WCSimPrimaryGeneratorMessenger(WCSimPrimaryGener
   niball_z_Cmd->SetGuidance("Select Z position for Nickel Ball");
   niball_z_Cmd->SetParameterName("niball_z",true);
   niball_z_Cmd->SetDefaultValue(0.0);
+  niball_spectrumCmd = new G4UIcmdWithAString("/mygen/niball_spectrum",this);
+  niball_spectrumCmd->SetGuidance("Select the file of vectors.");
+  niball_spectrumCmd->SetGuidance(" Enter the file name of the vector file");
+  niball_spectrumCmd->SetParameterName("niball_spectrum",true);
+  niball_spectrumCmd->SetDefaultValue("");
 }
 
 WCSimPrimaryGeneratorMessenger::~WCSimPrimaryGeneratorMessenger()
@@ -164,6 +169,10 @@ void WCSimPrimaryGeneratorMessenger::SetNewValue(G4UIcommand * command,G4String 
   if ( command==niball_z_Cmd )
     {
       myAction->SetNiBallZ(StoD(newValue));
+    }
+  if ( command==niball_spectrumCmd )
+    {
+      myAction->SetNiBallSpectrum(newValue);
     }
 
 }

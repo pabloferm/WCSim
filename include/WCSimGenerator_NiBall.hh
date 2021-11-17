@@ -19,7 +19,7 @@ class WCSimGenerator_NiBall
 	public:
 		WCSimGenerator_NiBall(WCSimDetectorConstruction* myDC);
 		~WCSimGenerator_NiBall();
-		void Initialize();
+		void Initialize(G4String file);
 
 		G4ThreeVector GetRandomVertex(G4int tSymNumber);
 		int GetNiGammaMode()			{ return fNiGammaMode; }
@@ -33,13 +33,18 @@ class WCSimGenerator_NiBall
 	
 		int fNiGammaMode;
 		int fNiGammaMultiplicity;
+	//        char fNiBallSpectrum[200];
+	        std::string fNiBallSpectrum;
 		double fNiGammaEnergy[4];
 		double fNiGammaPosition[3];
 		WCSimDetectorConstruction*      myDetector;
 
 		// Constants of gamma production as taken from SK
-		static G4double NiBallBR[37];
-		static G4int NiBallMulti[37];
-		static G4double NiBallEnergy[4][37];
+//		static G4double NiBallBR[37];
+//		static G4int NiBallMulti[37];
+//		static G4double NiBallEnergy[4][37];
+		static std::vector<G4double> NiBallBR;
+		static std::vector<G4int> NiBallMulti;
+		static std::vector<std::vector<G4double>> NiBallEnergy;
 };
 #endif

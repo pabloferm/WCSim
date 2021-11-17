@@ -426,12 +426,14 @@ void WCSimPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     { //Pablo: add Ni Ball source
         if ( !myNiBallGenerator ) {
                 myNiBallGenerator = new WCSimGenerator_NiBall(myDetector);
-                myNiBallGenerator->Initialize();
+                myNiBallGenerator->Initialize(niball_spectrum);
         }
         MyGPS->ClearAll();
         fNiBallPosition[0] = niball_X;
         fNiBallPosition[1] = niball_Y;
         fNiBallPosition[2] = niball_Z;
+        fNiBallSpectrum = niball_spectrum;
+        std::cout << "Selected Ni-Cf source spectrum file: " << fNiBallSpectrum << std::endl;
         for (int jj=0; jj<4; jj++) rn[jj] = G4UniformRand();
         myNiBallGenerator->SettingNiBall(fNiBallPosition,rn);
         int mode = myNiBallGenerator->GetNiGammaMode();

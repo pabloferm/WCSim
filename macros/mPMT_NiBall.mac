@@ -27,7 +27,7 @@
 #/WCSim/mPMT/PMTtype_outer PMT3inchR14374
 
 #Use mPMTs settings (uncomment/delete the above)
-/WCSim/WCgeom HyperK_HybridmPMT10PC
+#/WCSim/WCgeom HyperK_HybridmPMT10PC
 #/WCSim/mPMT/PMTtype_inner PMT3inchR14374
 #/WCSim/mPMT/PMTtype_outer PMT3inchR14374
 #/WCSim/WCgeom HyperK_mPMT
@@ -236,6 +236,8 @@
 /mygen/niball_x 10.0
 /mygen/niball_y -300.0
 /mygen/niball_z 1.0
+/mygen/niball_spectrum TemaplateNiSpectrum.dat
+
 #Clear the source and tell GPS to make multiple vertices
 /gps/source/clear
 

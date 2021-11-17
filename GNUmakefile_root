@@ -67,4 +67,3 @@ $(G4TMPDIR)/%.o: %.cxx
 clean :
 	@rm -f $(G4TMPDIR)/*.o
 	@rm -f ./WCSimRootDict.*
-

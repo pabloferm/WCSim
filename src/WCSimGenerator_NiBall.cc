@@ -11,34 +11,65 @@
 
 // Setting parameters
 
-double WCSimGenerator_NiBall::NiBallBR[37]   = {}; // Cumulative branching ratio for the Ni ball source
-int    WCSimGenerator_NiBall::NiBallMulti[37] = {}; // Multiplicities for each mode
-double WCSimGenerator_NiBall::NiBallEnergy[4][37] = {}; // Gamma energies for each mode
+std::vector<double> WCSimGenerator_NiBall::NiBallBR; // Cumulative branching ratio for the Ni ball source
+std::vector<int>    WCSimGenerator_NiBall::NiBallMulti; // Multiplicities for each mode
+std::vector<std::vector<double>> WCSimGenerator_NiBall::NiBallEnergy; // Gamma energies for each mode
 
 WCSimGenerator_NiBall::WCSimGenerator_NiBall(WCSimDetectorConstruction* myDC) {
         myDetector = myDC;
-        this->Initialize();
+//        this->Initialize(niball_spectrum);
 }
 
 WCSimGenerator_NiBall::~WCSimGenerator_NiBall() {
 }
 
-void WCSimGenerator_NiBall::Initialize() {
-	std::array<double, 37> ni_branching_ratio = {1.,0,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.};
-	std::array<int, 37> ni_multiplicity = {1, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	std::array<double, 37> ni_energy_1stphoton = {9.000, 0,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.};
-	std::array<double, 37> ni_energy_2ndphoton = {0., 0,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.};
-	std::array<double, 37> ni_energy_3rdphoton = {0., 0,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.};
-	std::array<double, 37> ni_energy_4thphoton = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.};
-	for (int i=0; i<37; i++) {
-		NiBallBR[i] = ni_branching_ratio[i];
-		NiBallMulti[i] = ni_multiplicity[i];
-		NiBallEnergy[0][i] = ni_energy_1stphoton[i];
-		NiBallEnergy[1][i] = ni_energy_2ndphoton[i];
-		NiBallEnergy[2][i] = ni_energy_3rdphoton[i];
-		NiBallEnergy[3][i] = ni_energy_4thphoton[i];
-  	}
+void WCSimGenerator_NiBall::Initialize(G4String file) {
+//	std::ifstream input( "NiSpectrum.dat" );
+	std::ifstream input( file );
+	std::cout<<"Entering NiBall Init"<<std::endl;
+	int modes;
+	int num;
+	double br, energy;
+	int i = 0;
+	int i0 = 0;
+	std::vector<double> Energy;
+	for( std::string eachLine; getline( input, eachLine ); )
+	{
+        std::istringstream strm(eachLine);
+        std::string splitedLines;
+        while ( strm >> splitedLines )
+        {
+        	std::stringstream geek(splitedLines);
+            	if (i==1){
+                    geek >>modes;
+            	}
+            	else if (i==3){
+                    geek >>br;
+                    NiBallBR.push_back (br);
+          	 }
+            	else if (i==5){
+                    geek >>num;
+                    NiBallMulti.push_back (num);
+            	}
+            	else if (i>6){
+                    if (i>i0 && i>7){
+                            NiBallEnergy.push_back (Energy);
+                            Energy.clear();
+                            i0 = i;
+                    }
+                    geek >>energy;
+                    Energy.push_back (energy);
+            	}
+            }
+        i=i+1;
+        }
+        NiBallEnergy.push_back (Energy);
+	if (modes!=NiBallBR.size()) std::cout<<"WARNING: Quoted and actual number of Ni-CF source modes is not the same, please check."<<std::endl;
+
 }
+
+
+
 
 void WCSimGenerator_NiBall::SettingNiBall(double fNiBallPosition[3], double rn[4]) {
 	int i = 0;
