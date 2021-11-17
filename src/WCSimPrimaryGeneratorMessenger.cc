@@ -139,7 +139,7 @@ void WCSimPrimaryGeneratorMessenger::SetNewValue(G4UIcommand * command,G4String 
       myAction->SetGPSEvtGenerator(false);
       myAction->SetNiBallEvtGenerator(false);
       myAction->SetRadonEvtGenerator(false);
-      myAction->SetInjectorEvtGenerator(false
+      myAction->SetInjectorEvtGenerator(false);
     }
     else if ( newValue == "gun")
     {
@@ -150,7 +150,7 @@ void WCSimPrimaryGeneratorMessenger::SetNewValue(G4UIcommand * command,G4String 
       myAction->SetGPSEvtGenerator(false);
       myAction->SetNiBallEvtGenerator(false);
       myAction->SetRadonEvtGenerator(false);
-      myAction->SetInjectorEvtGenerator(false
+      myAction->SetInjectorEvtGenerator(false);
     }
     else if ( newValue == "rootracker")   //M. Scott: Addition of Rootracker events
     {
@@ -161,7 +161,7 @@ void WCSimPrimaryGeneratorMessenger::SetNewValue(G4UIcommand * command,G4String 
       myAction->SetGPSEvtGenerator(false);
       myAction->SetNiBallEvtGenerator(false);
       myAction->SetRadonEvtGenerator(false);
-      myAction->SetInjectorEvtGenerator(false
+      myAction->SetInjectorEvtGenerator(false);
     }
     else if ( newValue == "laser")   //T. Akiri: Addition of laser
     {
@@ -307,7 +307,7 @@ void WCSimPrimaryGeneratorMessenger::SetNewValue(G4UIcommand * command,G4String 
     {
       myAction->SetInjectorWavelength(injectorWavelengthCmd->GetNewDoubleValue(newValue));
     }
-
+  }
 }
 
 G4String WCSimPrimaryGeneratorMessenger::GetCurrentValue(G4UIcommand* command)
